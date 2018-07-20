@@ -107,15 +107,39 @@ void file_in(uint32_t *stati)
     for(int i = 0; str[i]; i++)
         stati[str[i]]++;
 }
-void coding(node *top, uint32_t *code, char *reg)
+
+int stoint(char *in)
+{
+    int reg = 0;
+
+    for(int i = 0; in[i] != 0; i--)
+    {
+        reg <<= 1;
+        reg |= in[i] - '0';
+    }
+
+    return reg;
+}
+#if 1
+void coding(node *top, uint32_t *code_in, uint32_t *code_out, char *reg)
 {
     if(top->child_r == top->child_l)
     {
-        for(i = 0; i < UNIT && top->data != code[i]; i++);
-        code[i] = stonum(reg);
+        int i;
+
+        for(i = 0; i < UNIT && top->data != code_in[i]; i++);
+        code_in[i] = 0;
+        code_out[i] = stoint(reg);
     }
     if(top->child_l != NULL)
-        coding(top->child_l);
+    {
+        reg[0] = '1';
+        coding(top->child_l, code_in, code_out, &reg[1]);
+    }
     if(top->child_r != NULL)
-        coding(top->child_r);
+    {
+        reg[0] = '0';
+        coding(top->child_r, code_in, code_out, &reg[1]);
+    }
 }
+#endif
