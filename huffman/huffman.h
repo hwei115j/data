@@ -9,7 +9,7 @@ typedef struct node
     struct node *next;
 }node;
 
-void coding(node *, uint32_t *, uint32_t *, char *);
+void coding(node *, uint32_t *, char (*)[10]);
 node *set_root(uint32_t *);
 node *sort_node(node *);
 node *init_list(uint32_t *, size_t);

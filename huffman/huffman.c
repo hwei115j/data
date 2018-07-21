@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include "huffman.h"
 
 static int comp(const void *a, const void *b)
@@ -20,16 +21,18 @@ node *set_root(uint32_t *stati)
 
     qsort(stati, UNIT, sizeof(int), comp);
     for(cont = 0; stati[cont] == 0 && cont < UNIT; cont++);
+#if 0
     printf("%d\n", cont);
     for(int i = cont; i < UNIT; i++)
         printf("%u\n", stati[i]);
+#endif
     node *top = init_list(&stati[cont], UNIT - cont);
-    //test1(top);
+    test1(top);
     for(int i = 0; i < UNIT - cont - 1; i++)
     {
-      //  printf("\n");
+//        printf("\n");
         top = sort_node(top);
-        //test1(top);
+//        test1(top);
     }
 
     return top;
@@ -84,7 +87,7 @@ node *add_node(node *cl, node *cr)
 
 node *insert_list(node *top)
 {
-    if(top->next == NULL)
+    if(top->next == NULL || top->data <= top->next->data)
         return top;
     node *reg = top;
     node *head = top->next;
@@ -94,52 +97,58 @@ node *insert_list(node *top)
     top->next = reg->next;
     reg->next = top;
 
-    if(top->next == head)
-        return top;
     return head;
 }
 
 void file_in(uint32_t *stati)
 {
+#if 0
     char str[200];
 
     scanf("%s", str);
+    strlen(str);
     for(int i = 0; str[i]; i++)
-        stati[str[i]]++;
-}
-
-int stoint(char *in)
-{
-    int reg = 0;
-
-    for(int i = 0; in[i] != 0; i--)
     {
-        reg <<= 1;
-        reg |= in[i] - '0';
+        printf("#%d = %c\n",i, str[i]);
+        stati[str[i]]++;
     }
+#endif
+    //fread(str, sizeof(char), 200, stdin);
+    int ch;
 
-    return reg;
+    //while((ch = fgetc(stdin)) != EOF)
+    //    stati[ch]++;
+    while((ch = getchar()) != EOF)
+        stati[ch]++;
 }
+
 #if 1
-void coding(node *top, uint32_t *code_in, uint32_t *code_out, char *reg)
+static void coding_re(node *top, uint32_t *code, char (*dic)[10], char *reg, char *st)
 {
-    if(top->child_r == top->child_l)
+    if(top->child_r == NULL && top->child_l == NULL)
     {
         int i;
 
-        for(i = 0; i < UNIT && top->data != code_in[i]; i++);
-        code_in[i] = 0;
-        code_out[i] = stoint(reg);
+        for(i = 0; i < UNIT && top->data != code[i]; i++);
+        code[i] = 0;
+        memcpy(dic[i], st, sizeof(char) * 10);
     }
     if(top->child_l != NULL)
     {
-        reg[0] = '1';
-        coding(top->child_l, code_in, code_out, &reg[1]);
+        reg[0] = '0';
+        coding_re(top->child_l, code, dic, &reg[1], st);
     }
     if(top->child_r != NULL)
     {
-        reg[0] = '0';
-        coding(top->child_r, code_in, code_out, &reg[1]);
+        reg[0] = '1';
+        coding_re(top->child_r, code, dic, &reg[1], st);
     }
+    reg[0] = 0;
+}
+void coding(node *top, uint32_t *code, char (*dic)[10])
+{
+    char reg[UNIT] = {};
+
+    coding_re(top, code, dic, reg, reg);
 }
 #endif

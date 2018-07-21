@@ -130,7 +130,7 @@ int compar(const void *a, const void *b)
 int file_in(int *ascii, int *sorii, FILE *in)
 {
     int i, sum = 0;
-    char c;
+    int c;
     
     while((c = fgetc(in)) != EOF)
     {
