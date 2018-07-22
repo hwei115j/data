@@ -17,4 +17,6 @@ node *new_node(void);
 node *add_node(node *, node *);
 node *insert_list(node *);
 void file_in(uint32_t *);
+void file_out(char (*)[10]);
+void turn(char (*)[10]);
 #endif

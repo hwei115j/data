@@ -22,13 +22,13 @@ int main()
     file_in(stati);
     memcpy(code, stati, sizeof(stati));
     root = set_root(stati);
-    test(root);
-#if 1
+    //test(root);
     coding(root, code, dic);
+#if 0
     for(int i = 0; i < UNIT; i++)
         if(dic[i][0]) printf("%1c %3d = %s\n", i, i,  dic[i]);
 #endif
-    //file_out(root, code);
+    file_out(dic);
 
     return 0;
 }

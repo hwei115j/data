@@ -4,6 +4,7 @@
 #include <string.h>
 #include "huffman.h"
 
+
 static int comp(const void *a, const void *b)
 {
     return ((*(uint32_t *)a) - (*(uint32_t *)b));
@@ -27,7 +28,7 @@ node *set_root(uint32_t *stati)
         printf("%u\n", stati[i]);
 #endif
     node *top = init_list(&stati[cont], UNIT - cont);
-    test1(top);
+//    test1(top);
     for(int i = 0; i < UNIT - cont - 1; i++)
     {
 //        printf("\n");
@@ -100,27 +101,6 @@ node *insert_list(node *top)
     return head;
 }
 
-void file_in(uint32_t *stati)
-{
-#if 0
-    char str[200];
-
-    scanf("%s", str);
-    strlen(str);
-    for(int i = 0; str[i]; i++)
-    {
-        printf("#%d = %c\n",i, str[i]);
-        stati[str[i]]++;
-    }
-#endif
-    //fread(str, sizeof(char), 200, stdin);
-    int ch;
-
-    //while((ch = fgetc(stdin)) != EOF)
-    //    stati[ch]++;
-    while((ch = getchar()) != EOF)
-        stati[ch]++;
-}
 
 #if 1
 static void coding_re(node *top, uint32_t *code, char (*dic)[10], char *reg, char *st)
@@ -152,3 +132,37 @@ void coding(node *top, uint32_t *code, char (*dic)[10])
     coding_re(top, code, dic, reg, reg);
 }
 #endif
+
+void file_in(uint32_t *stati)
+{
+    FILE *in = fopen("./input", "r");
+    int ch;
+
+    while((ch = fgetc(in)) != EOF)
+        stati[ch]++;
+    fclose(in);
+}
+
+void file_out(char (*dic)[10])
+{
+    FILE *out = fopen("./dic", "w");
+
+    for(int i = 0; i < UNIT; i++)
+       if(dic[i][0]) fprintf(out, "%d %s\n", i, dic[i]);
+    fclose(out);
+    turn(dic);
+}
+
+void turn(char (*dic)[10])
+{
+    FILE *in = fopen("./input", "r");
+    FILE *out = fopen("./output", "w");
+    int ch;
+
+    while((ch = fgetc(in)) != EOF)
+        fprintf(out, "%s", dic[ch]);
+
+    fclose(in);
+    fclose(out);
+}
+
