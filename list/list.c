@@ -2,23 +2,104 @@
 #include <stdlib.h>
 #include "list.h"
 
-list_add(struct list_head *new, struct list_head *head)
-此函式會將新結點(new)串到head之後。
-list_add_tail(struct list_head *new, struct list_head *head)
-此函式則是將新結點(new)插到head之前。
-list_del(struct list_head *entry)
-將entry從其所屬串列中移出。
-list_del_init(struct list_head *entry)
-此函式除了將entry從其所屬串列中移出，還會將移出的entry從新初始化。
-list_empty(struct list_head *head)
-檢查此串列是不是空的。
-list_splice(struct list_head *list, struct list_head *head)
-將兩串列串接在一起。此函式會將list所指的串列接到head之後。
-list_entry(ptr, type, member)
-取出ptr所指的結點。此函式會回傳一結點指標，此結點包含ptr所指到的list_head。
-list_for_each(pos, head)
-走訪head所指到的串列，pos則會指向每一次走訪的結點。
-list_for_each_prev(pos, head)
-與上一個函式相同，不過走訪順序是相反的。
-list_for_each_safe(pos, n, head)
+struct list *list_new()
+{
+    struct list *p = malloc(sizeof(struct list));
 
+    p->data = 0;
+    p->next = NULL;
+
+    return p;
+}
+
+int list_push_last(struct list *head, int n)
+{
+    struct list *p = head;
+    
+    for(; p->next != NULL; p = p->next);
+    if((p->next = list_new()) == NULL)
+        return -1;
+    p->next->data = n;
+    head->data++;
+
+    return 0;
+}
+int list_push_first(struct list *head, int n)
+{
+    struct list *p;
+
+    if((p = list_new()) == NULL)
+        return -1;
+    p->next = head->next;
+    head->next = p;
+    p->data = n;
+    head->data++;
+    
+    return 0;
+}
+int list_print(struct list *head)
+{
+    struct list *p = head;
+    int i;
+
+    for(i = 0; p->next != NULL; p = p->next, i++)
+        printf("list[%d]: data = %d arr = %p next = %p\n", i, p->data, p, p->next);
+    printf("list[%d]: data = %d arr = %p next = %p\n", i, p->data, p, p->next);
+
+    return i;
+}
+int list_del(struct list *head, int n)
+{
+    struct list *p = head;
+    struct list *reg;
+    int i;
+
+    for(i = 0; i < n-1 && p->next != NULL; p = p->next, i++);
+    if(i != n-1) return -1;
+    reg = p->next->next;
+    free(p->next);
+    p->next = reg;
+    head->data--;
+
+    return 0;
+}
+int list_free(struct list *head)
+{
+    struct list *p;
+    
+    while(head != NULL)
+    {
+        p = head;
+        head = head->next;
+        free(p);
+    }
+
+    return 0;
+}
+
+int list_size(struct list *head)
+{
+    return head->data;
+}
+
+int list_get_first(struct list *head)
+{
+    return head->next->data;
+}
+
+int list_get_last(struct list *head)
+{
+    struct list *p = head;
+    
+    for(; p->next != NULL; p = p->next);
+
+    return p->data;
+}
+int list_del_first(struct list *head)
+{
+    return list_del(head, 1);
+}
+int list_del_last(struct list *head)
+{
+    return list_del(head, head->data);
+}
