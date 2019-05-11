@@ -6,4 +6,4 @@ test: comp
 comp:
 	gcc rand.c -o rand; gcc judge.c -o judge; gcc $(IN).c -o $(IN)
 clean:
-	rm -f *.exe *.out _test _rand _test1 _diff
+	rm -f *.exe *.out _test _rand _test1 _diff *.stackdump
