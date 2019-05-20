@@ -4,22 +4,19 @@
 
 void quick(uint32_t *n, int len)
 {
-    if(len < 2)
-        return ;
-    uint32_t pivot = n[0];
-    int left = 0, right = len - 1;
-    while(left < right)
-    {
-        while(n[left] < pivot && left < right)
-            left++;
-        while(n[right] >= pivot && left < right)
-            right--;
-        SWAP(n[left], n[right]);
-    }
-    quick(&n[0], len/2);
-    quick(&n[len/2], (len + 1)/2);
-}
+    if(len <= 1) return ;
+    int pivot = 0, i, j;
 
+    for(i = pivot+1, j = len-1; i < j;) {
+        while(i < j && n[i] <= n[pivot]) i++;
+        while(i < j && n[j] > n[pivot]) j--;
+        SWAP(n[i], n[j]);
+    }
+    if(n[i] < n[pivot])
+        SWAP(n[i], n[pivot]);
+    quick(&n[0], i);
+    quick(&n[i], len-i);
+}
 int main()
 {
     uint32_t n[MAX];
